@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import Episodes from './Episodes';
 
 const episodesData = [
@@ -72,5 +72,21 @@ const episodesData = [
 ];
 
 test("renders without errors", () => {
-  render(<Episodes episodes={[]} />)
+  render(<Episodes episodes={[]} />);
+})
+
+test("show the list of episodes when dropdown is clicked", () => {
+  const { rerender } = render(<Episodes episodes={[]} />);
+  let episodeInfo = screen.queryAllByTestId(/episode/i);
+  expect(episodeInfo).toHaveLength(0);
+  expect(episodeInfo).toStrictEqual([]);
+
+  rerender(<Episodes episodes={episodesData} />);
+  episodeInfo = screen.getAllByTestId(/episode/i);
+  // expect(episodeInfo).toHaveLength(3);
+})
+
+test("episodes content renders to the page", () => {
+  render(<Episodes episodes={[episodesData]} />)
+  screen.debug()
 })
