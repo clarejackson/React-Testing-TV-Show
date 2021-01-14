@@ -5,26 +5,45 @@ import App from './App';
 import { fetchShow as mockFetchShow } from './api/fetchShow';
 import { showData } from './data';
 
-// Tests:
-// 1. That the App loads
-// 2. API call is successful
-// 3. Dropdown can be clicked "Select a season"
-// 4. Season 1 can be clicked
-// 5. Season 2 can be clicked
-// 5. Season 3 can be clicked
-// 5. Season 4 can be clicked
-
 jest.mock("./api/fetchShow");
 
 test("renders with data", async () => {
   mockFetchShow.mockResolvedValueOnce(showData);
-  // const { rerender, getByText } = render(<App />);
-  // screen.debug();
-  // await act(async () => {
-  //   await rerender(<App />);
-  //   const dropDown = getByText(/select a season/i);
-  //   userEvent.click(dropDown);
-  //   screen.debug()
-  // })
+  render(<App />);
+  const fetchingDataMessage = screen.getByText(/fetching data/i);
+  expect(fetchingDataMessage).not.toBeNull();
+  expect(fetchingDataMessage).toBeInTheDocument();
+})
+
+test("renders the sections displayed from api call", async () => {
+  mockFetchShow.mockResolvedValueOnce(showData);
+  render(<App />);
+  screen.debug();
+  await waitFor(() => {
+    expect(screen.getByText(/a love letter/i)).toBeInTheDocument();
+  })
+})
+
+test("renders the season list when dropdown is clicked", async () => {
+  mockFetchShow.mockResolvedValueOnce(showData);
+  render(<App />);
+  await waitFor(() => {
+    expect(screen.getByText(/a love letter/i)).toBeInTheDocument();
+  });
+  userEvent.click(screen.getByText(/select a season/i));
+})
+
+test("renders the episodes when season is clicked", async () => {
+  mockFetchShow.mockResolvedValueOnce(showData);
+  render(<App />);
+  await waitFor(() => {
+    expect(screen.getByText(/a love letter/i)).toBeInTheDocument();
+  });
+  screen.debug();
+  userEvent.click(screen.getByText(/select a season/i));
+  userEvent.click(screen.getByText(/season 1/i));
+  await waitFor(() => {
+    expect(screen.getByText(/chapter one: the vanishing of will byers/i)).toBeInTheDocument();
+  })
 })
 
